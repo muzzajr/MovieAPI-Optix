@@ -15,59 +15,47 @@ namespace MovieAPI.Controllers
             _configuration = configuration;
         }
 
-        [Route("movies-by-title")]
+        [Route("get-movies")]
         [HttpGet]
-        public string GetMoviesByTitle(string title = "", int maxReturn = 1) 
+        public string GetMoviesByTitle(int maxReturn = 1, string? title = "", string? genre = "", string? sortType = "" ) 
         {
-            string query = @"SELECT * FROM Public.moviedata  WHERE title LIKE '%" + title + "%' LIMIT " + maxReturn;
+            string query = "";
 
-            DataTable dt = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("WebApiDatabase");
-            NpgsqlDataReader myReader;
-            using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSource))
+            if(title != "" && genre != "" && sortType != "")
             {
-                myConn.Open();
-                using(NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
+                query = @"SELECT * FROM Public.moviedata  WHERE title LIKE '%" + title + "%' " +
+                "AND genre LIKE '%" + genre + "%'";
+            }
+            else if (title == "" && genre != "")
+            {
+                query = @"SELECT * FROM Public.moviedata  WHERE genre LIKE '%" + genre + "%'";
+            }
+            else if (title != "" && genre == "")
+            {
+                query = @"SELECT * FROM Public.moviedata  WHERE title LIKE '%" + title + "%'";
+            }
+            else
+            {
+                query = @"SELECT * FROM Public.moviedata";
+            }
+
+            if(sortType != "")
+            {
+                if(sortType == "alpha_asc")
                 {
-                    myReader = myCommand.ExecuteReader();
-                    dt.Load(myReader);
-                    myReader.Close();
-                    myConn.Close();
+                    query += " ORDER BY title";
+                }
+                else if(sortType == "alpha_desc")
+                {
+                    query += " ORDER BY title DESC";
                 }
             }
 
-            return Newtonsoft.Json.JsonConvert.SerializeObject(dt);
-        }
-
-        [Route("movies-by-genre")]
-        [HttpGet]
-        public string GetMoviesByGenre(string genre = "Action", int maxReturn = 1)
-        {
-            string query = @"SELECT * FROM Public.moviedata  WHERE genre LIKE '%" + genre + "%' LIMIT " + maxReturn;
-
-            DataTable dt = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("WebApiDatabase");
-            NpgsqlDataReader myReader;
-            using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSource))
+            if (maxReturn != 0)
             {
-                myConn.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
-                {
-                    myReader = myCommand.ExecuteReader();
-                    dt.Load(myReader);
-                    myReader.Close();
-                    myConn.Close();
-                }
+                query += " LIMIT " + maxReturn;
             }
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(dt);
-        }
-
-        [Route("movies-by-actor")]
-        [HttpGet]
-        public string GetMoviesByActor(string actor = "Tom Holland", int maxReturn = 10)
-        {
-            string query = @"SELECT * FROM Public.moviedata  WHERE overview LIKE '%" + actor + "%' LIMIT " + maxReturn;
+            
 
             DataTable dt = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("WebApiDatabase");
@@ -85,6 +73,8 @@ namespace MovieAPI.Controllers
             }
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(dt);
+
+            
         }
     }
 }
