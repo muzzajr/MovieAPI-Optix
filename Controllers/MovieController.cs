@@ -19,6 +19,9 @@ namespace MovieAPI.Controllers
         [HttpGet]
         public string GetMoviesByTitle(int maxReturn = 1, string? title = "", string? genre = "", string? sortType = "" ) 
         {
+
+            // A Get function that quires the database based on given inputs
+
             string query = "";
 
             if(title != "" && genre != "" && sortType != "")

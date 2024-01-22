@@ -2,26 +2,27 @@
 import GenreDropdown from "./genreDropdown";
 import axios from "axios";
 
-function InputSection({ setMovieItems }) {
+function InputSection({ setMovieItems, setCurrentPage }) {
   const handleSearch = () => {
     const genreInput = document.getElementById("genreInput").value;
     const titleInput = document.getElementById("titleInput").value;
-    let searchLimit = 28;
+    let searchLimit = 280;
     if (document.getElementById("searchLimit").value) {
       searchLimit = document.getElementById("searchLimit").value;
     }
 
-    let searchUrl = "";
+    let searchUrl = `http://localhost:8080/get-movies?maxReturn=${searchLimit}`;
     if (genreInput && titleInput) {
-      searchUrl = `https://localhost:7103/get-movies?maxReturn=${searchLimit}&title=${titleInput}&genre=${genreInput}`;
+      searchUrl = `http://localhost:8080/get-movies?maxReturn=${searchLimit}&title=${titleInput}&genre=${genreInput}`;
     } else if (genreInput && !titleInput) {
-      searchUrl = `https://localhost:7103/get-movies?maxReturn=${searchLimit}&genre=${genreInput}`;
+      searchUrl = `http://localhost:8080/get-movies?maxReturn=${searchLimit}&genre=${genreInput}`;
     } else if (!genreInput && titleInput) {
-      searchUrl = `https://localhost:7103/get-movies?maxReturn=${searchLimit}&title=${titleInput}`;
+      searchUrl = `http://localhost:8080/get-movies?maxReturn=${searchLimit}&title=${titleInput}`;
     }
     axios
       .get(searchUrl)
       .then((response) => {
+        setCurrentPage(1);
         setMovieItems(response.data);
       })
       .catch((error) => {
