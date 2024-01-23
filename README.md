@@ -1,6 +1,13 @@
 # Optix MovieAPI
 This repo holds all of the files for the Optix take home test.
 The test was to create an API that queries a database of my choosing that contains movie data and create a frontend to display the information.
+### Features
+- Search by either Title and/or Genre Note: There was potential to search by actor but the given data set does not have the relevant information.
+- Specify a search return limit (the default is 280)
+- Pagination allows you to go through the return data a page at a time
+- Choose how many movies will be displayed per page from 14, 28 or 42
+- Sort the movies in ascending or descending alphabetical order
+- Click on a movie to open up an overlay, displaying fuller information such as the overview, total votes, genres etc.
 
 ## The Tech Used
 ### The Database
@@ -13,6 +20,7 @@ Since I was told Optix are mostly working in .NET I decided to use the .NET 6 fr
 For the frontend I went for a React approach. This is a framework/library I am fond of and combined with tailwind css, I think provides an easy way to create good looking reactive applications.
 
 ### Deployment
+Make sure the Docker daemon is running.
 I have created docker files for the frontend application and the .NET API. There is also an SQL file that is read during the postgresql database setup.
 A docker compose file has also been made for easy build and deployment to try out this code.
 
